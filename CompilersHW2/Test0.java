@@ -10,6 +10,6 @@ class Main {
     int b = 3;
     int n = 3+4*5;
     boolean nn = (Object)(String)(Object)z;
-    int k = - - - -n;
+    int k = -  - - -n;
   }
 }

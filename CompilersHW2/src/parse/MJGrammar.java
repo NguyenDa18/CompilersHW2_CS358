@@ -157,6 +157,13 @@ public class MJGrammar
 	public Exp newPlus(Exp e1, int pos, Exp e2) {
 		return new Plus(pos, e1, e2);
 	}
+
+	//: <exp3> ::= <exp3> # `- <exp2> =>
+	public Exp newMinus(Exp e1, int pos, Exp e2) {
+		return new Minus(pos, e1, e2);
+	} 
+
+
 	//: <exp4> ::= <exp3> => pass
 
 	//: <exp3> ::= <exp3> # `* <exp2> =>
@@ -167,6 +174,11 @@ public class MJGrammar
 	//: <exp3> ::= <exp3> # `/ <exp2> =>
 	public Exp newDivide(Exp e1, int pos, Exp e2) {
 		return new Divide(pos, e1, e2);
+	}
+
+	//: <exp3> ::= <exp3> # `% <exp2> =>
+	public Exp newRemainder(Exp e1, int pos, Exp e2) {
+		return new Remainder(pos, e1, e2);
 	}
 
 	//: <exp3> ::= <exp3> # `&& <exp2> =>
@@ -199,6 +211,7 @@ public class MJGrammar
 	public Exp newArrayLookup(Exp e1, int pos, Exp e2) {
 		return new ArrayLookup(pos, e1, e2);
 	}
+
 	//: <exp1> ::= # INTLIT =>
 	public Exp newIntegerLiteral(int pos, int n) {
 		return new IntegerLiteral(pos, n);

@@ -7,7 +7,7 @@ class Main {
     int b = jon[1];
 
     break
-    int n = true;
+    boolean n = true;
     boolean nn = (Object)(String)(Object)z;
     int k = -  - - -n;
   }

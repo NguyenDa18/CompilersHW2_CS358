@@ -76,10 +76,25 @@ public class MJGrammar
 				new StatementList(stmts));
 	}
 
+	/** ==========================================================================
+	// TYPES
+	============================================================================== */
+
 	//: <type> ::= # `int =>
 	public Type intType(int pos) {
 		return new IntegerType(pos);
 	}
+
+	//: <type> ::= # `null =>
+	public Type nullType(int pos) {
+		return new NullType(pos);
+	}
+
+	//: <type> ::= # `void =>
+	public Type voidType(int pos) {
+		return new VoidType(pos);
+	}
+
 	//: <type> ::= # `boolean =>
 	public Type booleanType(int pos) {
 		return new BooleanType(pos);
@@ -95,9 +110,9 @@ public class MJGrammar
 
 	//: <empty bracket pair> ::= `[ `] => null
 
-	//================================================================
-	// statement-level program constructs
-	//================================================================
+	/** ==========================================================================
+	// STATEMENT - LEVEL CONSTRUCTS
+	============================================================================== */
 
 	//: <stmt> ::= <assign> `; => pass
 	
@@ -117,9 +132,9 @@ public class MJGrammar
 		return new LocalDeclStatement(pos, new LocalVarDecl(pos, t, name, init));
 	}
 
-	//================================================================
-	// expressions
-	//================================================================
+	/** ==========================================================================
+	// EXPRESSIONS
+	============================================================================== */
 
 	//: <exp> ::= <exp4> => pass
 	
@@ -133,6 +148,17 @@ public class MJGrammar
 	public Exp newTimes(Exp e1, int pos, Exp e2) {
 		return new Times(pos, e1, e2);
 	}
+
+	//: <exp3> ::= <exp3> # `/ <exp2> =>
+	public Exp newDivide(Exp e1, int pos, Exp e2) {
+		return new Divide(pos, e1, e2);
+	}
+
+	//: <exp3> ::= <exp3> # `&& <exp2> =>
+	public Exp newAnd(Exp e1, int pos, Exp e2) {
+		return new And(pos, e1, e2);
+	}
+	
 	//: <exp3> ::= <exp2> => pass
 
 	//: <exp2> ::= <cast exp> => pass

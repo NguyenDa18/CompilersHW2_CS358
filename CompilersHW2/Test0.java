@@ -2,13 +2,12 @@
 // Note that it has semantic errors, such as references to undefined
 // and mismatched types--but these will not be caught until Assignment 3
 // and Assignment 4.
-class Main { 
-  /* this is a comment */
-  /*/ this is another comment */
-  /*   /* this is another comment */
+class Main {
   public void main() {
-    int b = 3;
-    int n = 3+4*5;
+    int b = jon[1];
+
+    break
+    int n = true;
     boolean nn = (Object)(String)(Object)z;
     int k = -  - - -n;
   }

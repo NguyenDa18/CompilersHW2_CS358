@@ -122,6 +122,11 @@ public class MJGrammar
 	}
 	//: <stmt> ::= <local var decl> `; => pass
 
+	//: <stmt> ::= # `break =>
+	public Statement newBreak(int pos) {
+		return new Break(pos);
+	}
+
 	//: <assign> ::= <exp> # `= <exp> =>
 	public Statement assign(Exp lhs, int pos, Exp rhs) {
 		return new Assign(pos, lhs, rhs);
@@ -137,6 +142,16 @@ public class MJGrammar
 	============================================================================== */
 
 	//: <exp> ::= <exp4> => pass
+
+	//: <exp4> ::= # `true =>
+	public Exp newTrue(int pos) {
+		return new True(pos);
+	}
+
+	//: <exp4> ::= # `false =>
+	public Exp newFalse(int pos) {
+		return new False(pos);
+	}
 	
 	//: <exp4> ::= <exp4> # `+ <exp3> =>
 	public Exp newPlus(Exp e1, int pos, Exp e2) {
@@ -187,6 +202,11 @@ public class MJGrammar
 	//: <exp1> ::= # INTLIT =>
 	public Exp newIntegerLiteral(int pos, int n) {
 		return new IntegerLiteral(pos, n);
+	}
+
+	//: <exp1> ::= # STRINGLIT =>
+	public Exp newStringLiteral(int pos, String s) {
+		return new StringLiteral(pos, s);
 	}
 
 	//================================================================

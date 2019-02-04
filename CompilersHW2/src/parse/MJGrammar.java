@@ -122,7 +122,8 @@ public class MJGrammar
 	}
 	//: <stmt> ::= <local var decl> `; => pass
 
-	//: <stmt> ::= # `break =>
+
+	//: <stmt> ::= # `break `; =>
 	public Statement newBreak(int pos) {
 		return new Break(pos);
 	}
@@ -136,6 +137,13 @@ public class MJGrammar
 	public Statement localVarDecl(Type t, int pos, String name, Exp init) {
 		return new LocalDeclStatement(pos, new LocalVarDecl(pos, t, name, init));
 	}
+
+	//: <super> ::= # `super
+
+	// //: <inst var decl> ::= <type> # ID `; =>
+	// public Statement instanceVarDecl(Type t, int pos, String name) {
+	// 	return new InstVarDecl(pos, t, name);
+	// }
 
 	/** ==========================================================================
 	// EXPRESSIONS
@@ -196,6 +204,11 @@ public class MJGrammar
 		return new Cast(pos, t, e);
 	}
 	//: <cast exp> ::= # `( <type> `) <exp1> => Exp newCast(int, Type, Exp)
+
+	//: <exp3> ::= <exp3> # `instanceof <type> =>
+	public Exp newInstanceOf(Exp e1, int pos, Type t) {
+		return new InstanceOf(pos, e1, t);
+	}
 
 	//: <unary exp> ::= # `- <unary exp> =>
 	public Exp newUnaryMinus(int pos, Exp e) {

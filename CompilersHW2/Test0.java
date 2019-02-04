@@ -6,7 +6,9 @@ class Main {
   public void main() {
     int b = jon[1];
 
-    break
+    if
+
+    break;
     boolean n = true;
     boolean nn = (Object)(String)(Object)z;
     int k = -  - - -n;

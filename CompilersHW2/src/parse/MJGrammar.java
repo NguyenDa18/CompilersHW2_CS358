@@ -137,6 +137,11 @@ public class MJGrammar
 		return new If(pos, exp, body, new Block(elsePos, new StatementList()));
 	}
 
+	//: <stmt> ::= # `if `( <exp> `) <stmt> # `else <stmt> =>
+	public Statement newIfElseBlock(int ifPos, Exp exp, Statement ifBody, int elsePos, Statement elseBody) {
+		return new If(ifPos, exp, ifBody, elseBody);
+	}
+
 	//: <stmt> ::= # `while `( <exp> `) <stmt> =>
 	public Statement newWhileBlock(int pos, Exp exp, Statement body) {
 		return new While(pos, exp, body);
@@ -224,6 +229,16 @@ public class MJGrammar
 	public Exp newAnd(Exp e1, int pos, Exp e2) {
 		return new And(pos, e1, e2);
 	}
+
+	//: <exp3> ::= <exp3> # `< <exp2> =>
+	public Exp newLessThan(Exp e1, int pos, Exp e2) {
+		return new LessThan(pos, e1, e2);
+	}
+
+	//: <exp3> ::= <exp3> # `> <exp2> =>
+	public Exp newGreaterThan(Exp e1, int pos, Exp e2) {
+		return new GreaterThan(pos, e1, e2);
+	}
 	
 	//: <exp3> ::= <exp2> => pass
 
@@ -283,6 +298,16 @@ public class MJGrammar
 	//: <exp1> ::= # STRINGLIT =>
 	public Exp newStringLiteral(int pos, String s) {
 		return new StringLiteral(pos, s);
+	}
+
+	//: <exp1> ::= # CHARLIT =>
+	public Exp newCharLiteral(int pos, int charAscii) {
+		return new IntegerLiteral(pos, charAscii);
+	}
+
+	//: <exp1> ::= # `this =>
+	public Exp newThis(int pos) {
+		return new This(pos);
 	}
 
 	//================================================================
@@ -428,4 +453,3 @@ public class MJGrammar
 	//: hexDigit128 ::= {176..185 225..230 193..198} => char sub128(char)
 
 }
-

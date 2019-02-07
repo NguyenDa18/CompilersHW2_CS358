@@ -68,6 +68,11 @@ public class MJGrammar
 		return new ClassDecl(pos, name, "Object", new DeclList(vec));
 	}
 
+	//: <class decl> ::= `class # ID `extends ID `{ <decl in class>* `} =>
+	public ClassDecl createdExtendsClassDecl(int pos, String subClassName, String superClassName, List<Decl> decls) {
+		return new ClassDecl(pos, subClassName, superClassName, new DeclList(decls));
+	}
+
 	//: <decl in class> ::= <method decl> => pass
 
 	//: <method decl> ::= `public `void # ID `( `) `{ <stmt>* `} =>
@@ -113,14 +118,18 @@ public class MJGrammar
 	/** ==========================================================================
 	// STATEMENT - LEVEL CONSTRUCTS
 	============================================================================== */
-
-	//: <stmt> ::= <assign> `; => pass
-	
 	//: <stmt> ::= # `{ <stmt>* `} =>
 	public Statement newBlock(int pos, List<Statement> sl) {
 		return new Block(pos, new StatementList(sl));
 	}
+
+	//: <stmt> ::= <assign> `; => pass
+
 	//: <stmt> ::= <local var decl> `; => pass
+
+	////: <stmt> ::= <if> `; => pass
+
+	////: <if> ::= # `if <exp> <stmt> => null
 
 
 	//: <stmt> ::= # `break `; =>
@@ -132,6 +141,12 @@ public class MJGrammar
 	public Statement assign(Exp lhs, int pos, Exp rhs) {
 		return new Assign(pos, lhs, rhs);
 	}
+
+	// //: <assign> ::= <exp> # `++ =>
+	// public Statement assignPlusPlus(Exp lhs, int pos) {
+	// 	Plus operation = new Plus(pos, Exp lhs, + 1);
+	// 	return new Assign(pos, lhs, )
+	// }
 
 	//: <local var decl> ::= <type> # ID `= <exp> =>
 	public Statement localVarDecl(Type t, int pos, String name, Exp init) {
@@ -146,7 +161,20 @@ public class MJGrammar
 	// }
 
 	/** ==========================================================================
-	// EXPRESSIONS
+	// EXPRESSIONS (Based on Slide 6.2 from Notes)
+	// ASSIGNING
+	// exp1 ::= ID, INTLIT, STRINGLIT, Array
+
+	// MUTATE VAL VIA CASTING
+	// exp2 ::= +exp , -exp, !exp, (ID)exp
+
+	// MULT,DIV,REMAINDER OPERATIONS
+	// exp3 ::= exp * exp, exp / exp, exp % exp
+
+	// ADD/MINUS OPERATIONS
+	// exp4 ::= exp + exp, exp - exp
+
+
 	============================================================================== */
 
 	//: <exp> ::= <exp4> => pass

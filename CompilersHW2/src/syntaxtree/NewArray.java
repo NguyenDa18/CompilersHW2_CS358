@@ -55,7 +55,7 @@ public class NewArray extends Exp {
 		ps.print("[");
 		pp.print(this.sizeExp, ps);
 		ps.print("]");
-		for (int i = 1; i < count; i++) {
+		for (int i = 0; i < count; i++) {
 			ps.print("[]");
 		}
 	}

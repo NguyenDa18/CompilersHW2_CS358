@@ -63,6 +63,10 @@ public class MJGrammar
 		return new Program(pos, new ClassDeclList(vec));
 	}
 
+	/** ==========================================================================
+	// DECLS
+	============================================================================== */
+
 	//: <class decl> ::= `class # ID `{ <decl in class>* `} =>
 	public ClassDecl createClassDecl(int pos, String name, List<Decl> vec) {
 		return new ClassDecl(pos, name, "Object", new DeclList(vec));
@@ -90,9 +94,9 @@ public class MJGrammar
 		return new IntegerType(pos);
 	}
 
-	//: <type> ::= # `null =>
-	public Type nullType(int pos) {
-		return new NullType(pos);
+	//: <type> ::= # `boolean =>
+	public Type booleanType(int pos) {
+		return new BooleanType(pos);
 	}
 
 	//: <type> ::= # `void =>
@@ -100,10 +104,11 @@ public class MJGrammar
 		return new VoidType(pos);
 	}
 
-	//: <type> ::= # `boolean =>
-	public Type booleanType(int pos) {
-		return new BooleanType(pos);
+	//: <type> ::= # `null =>
+	public Type nullType(int pos) {
+		return new NullType(pos);
 	}
+
 	//: <type> ::= # ID =>
 	public Type identifierType(int pos, String name) {
 		return new IdentifierType(pos, name);
@@ -127,9 +132,15 @@ public class MJGrammar
 
 	//: <stmt> ::= <local var decl> `; => pass
 
-	////: <stmt> ::= <if> `; => pass
+	//: <stmt> ::= # `if `( <exp> `) <stmt> # !`else =>
+	public Statement newIfBlock(int pos, Exp exp, Statement body, int elsePos) {
+		return new If(pos, exp, body, new Block(elsePos, new StatementList()));
+	}
 
-	////: <if> ::= # `if <exp> <stmt> => null
+	//: <stmt> ::= # `while `( <exp> `) <stmt> =>
+	public Statement newWhileBlock(int pos, Exp exp, Statement body) {
+		return new While(pos, exp, body);
+	}
 
 
 	//: <stmt> ::= # `break `; =>
@@ -142,23 +153,15 @@ public class MJGrammar
 		return new Assign(pos, lhs, rhs);
 	}
 
-	// //: <assign> ::= <exp> # `++ =>
-	// public Statement assignPlusPlus(Exp lhs, int pos) {
-	// 	Plus operation = new Plus(pos, Exp lhs, + 1);
-	// 	return new Assign(pos, lhs, )
-	// }
-
 	//: <local var decl> ::= <type> # ID `= <exp> =>
 	public Statement localVarDecl(Type t, int pos, String name, Exp init) {
 		return new LocalDeclStatement(pos, new LocalVarDecl(pos, t, name, init));
 	}
 
-	//: <super> ::= # `super
-
-	// //: <inst var decl> ::= <type> # ID `; =>
-	// public Statement instanceVarDecl(Type t, int pos, String name) {
-	// 	return new InstVarDecl(pos, t, name);
-	// }
+	//: <inst var decl> ::= <type> # ID `; =>
+	public Decl instanceVarDecl(Type t, int pos, String name) {
+		return new InstVarDecl(pos, t, name);
+	}
 
 	/** ==========================================================================
 	// EXPRESSIONS (Based on Slide 6.2 from Notes)
@@ -238,10 +241,29 @@ public class MJGrammar
 		return new InstanceOf(pos, e1, t);
 	}
 
+	//: <unary exp> ::= # `+ <unary exp> =>
+	public Exp newUnaryPlus(int pos, Exp e) {
+		return new Plus(pos, new IntegerLiteral(pos, 0), e);
+	}
+
 	//: <unary exp> ::= # `- <unary exp> =>
 	public Exp newUnaryMinus(int pos, Exp e) {
 		return new Minus(pos, new IntegerLiteral(pos, 0), e);
 	}
+
+	//: <unary exp> ::= # `! <unary exp> =>
+	public Exp newUnaryNot(int pos, Exp e) {
+		return new Not(pos, e);
+	}
+
+	// //: <unary exp> ::= # <ID> `.length =>
+	// public Exp newArrayLength(pos, Exp arrExp) {
+	// 	return new ArrayLength(pos, arrExp);
+	// }
+
+
+
+
 	//: <unary exp> ::= <exp1> => pass
 
 	//: <exp1> ::= # ID  =>

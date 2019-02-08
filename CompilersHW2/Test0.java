@@ -7,8 +7,7 @@ class Main extends Food {
     int b = jon[1];
 
     break;
-    boolean n = true;
-    boolean nn = (Object)(String)(Object)z;
-    int k = -  - - -n;
+    boolean n = stork + 4;
+    int k = 4;
   }
 }

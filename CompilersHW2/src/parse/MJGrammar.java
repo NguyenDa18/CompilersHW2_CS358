@@ -185,30 +185,37 @@ public class MJGrammar
 
 	============================================================================== */
 
-	//: <exp> ::= <exp4> => pass
+	//: <exp> ::= <exp5> => pass
+	//: <exp5> ::= <exp4> => pass
+	//: <exp4> ::= <exp3> => pass
+	//: <exp3> ::= <exp2> => pass
+	//: <exp2> ::= <exp1> => pass
 
-	//: <exp4> ::= # `true =>
-	public Exp newTrue(int pos) {
-		return new True(pos);
+	//: <exp5> ::= <exp5> # `< <exp4> =>
+	public Exp newLessThan(Exp left, int pos, Exp right) {
+		return new LessThan(pos, left, right);
 	}
 
-	//: <exp4> ::= # `false =>
-	public Exp newFalse(int pos) {
-		return new False(pos);
+	//: <exp5> ::= <exp5> # `<= <exp4> =>
+	public Exp newLessThanEqualTo(Exp left, int pos, Exp right) {
+		return new Not(pos, new LessThan(pos, left, right));
 	}
-	
+
+	//: <exp5> ::= <exp5> # `> <exp4> =>
+	public Exp newGreaterThan(Exp left, int pos, Exp right) {
+		return new GreaterThan(pos, left, right);
+
+	}
+
 	//: <exp4> ::= <exp4> # `+ <exp3> =>
 	public Exp newPlus(Exp e1, int pos, Exp e2) {
 		return new Plus(pos, e1, e2);
 	}
 
-	//: <exp3> ::= <exp3> # `- <exp2> =>
+	//: <exp4> ::= <exp4> # `- <exp3> =>
 	public Exp newMinus(Exp e1, int pos, Exp e2) {
 		return new Minus(pos, e1, e2);
-	} 
-
-
-	//: <exp4> ::= <exp3> => pass
+	}
 
 	//: <exp3> ::= <exp3> # `* <exp2> =>
 	public Exp newTimes(Exp e1, int pos, Exp e2) {
@@ -225,66 +232,31 @@ public class MJGrammar
 		return new Remainder(pos, e1, e2);
 	}
 
-	//: <exp3> ::= <exp3> # `&& <exp2> =>
-	public Exp newAnd(Exp e1, int pos, Exp e2) {
-		return new And(pos, e1, e2);
-	}
-
-	//: <exp3> ::= <exp3> # `< <exp2> =>
-	public Exp newLessThan(Exp e1, int pos, Exp e2) {
-		return new LessThan(pos, e1, e2);
-	}
-
-	//: <exp3> ::= <exp3> # `> <exp2> =>
-	public Exp newGreaterThan(Exp e1, int pos, Exp e2) {
-		return new GreaterThan(pos, e1, e2);
-	}
-	
-	//: <exp3> ::= <exp2> => pass
-
-	//: <exp2> ::= <cast exp> => pass
-	//: <exp2> ::= <unary exp> => pass
-
-	//: <cast exp> ::= # `( <type> `) <cast exp> =>
+	//: <exp2> ::= # `( <type> `) <exp1> =>
 	public Exp newCast(int pos, Type t, Exp e) {
 		return new Cast(pos, t, e);
 	}
-	//: <cast exp> ::= # `( <type> `) <exp1> => Exp newCast(int, Type, Exp)
 
-	//: <exp3> ::= <exp3> # `instanceof <type> =>
-	public Exp newInstanceOf(Exp e1, int pos, Type t) {
-		return new InstanceOf(pos, e1, t);
-	}
-
-	//: <unary exp> ::= # `+ <unary exp> =>
+	//: <exp2> ::= # `+ <exp1> =>
 	public Exp newUnaryPlus(int pos, Exp e) {
 		return new Plus(pos, new IntegerLiteral(pos, 0), e);
 	}
 
-	//: <unary exp> ::= # `- <unary exp> =>
+	//: <exp2> ::= # `- <exp1> =>
 	public Exp newUnaryMinus(int pos, Exp e) {
 		return new Minus(pos, new IntegerLiteral(pos, 0), e);
 	}
 
-	//: <unary exp> ::= # `! <unary exp> =>
+	//: <exp2> ::= # `! <exp1> =>
 	public Exp newUnaryNot(int pos, Exp e) {
 		return new Not(pos, e);
 	}
-
-	// //: <unary exp> ::= # <ID> `.length =>
-	// public Exp newArrayLength(pos, Exp arrExp) {
-	// 	return new ArrayLength(pos, arrExp);
-	// }
-
-
-
-
-	//: <unary exp> ::= <exp1> => pass
 
 	//: <exp1> ::= # ID  =>
 	public Exp newIdentfierExp(int pos, String name) {
 		return new IdentifierExp(pos, name);
 	}
+
 	//: <exp1> ::= <exp1> !<empty bracket pair> # `[ <exp> `] =>
 	public Exp newArrayLookup(Exp e1, int pos, Exp e2) {
 		return new ArrayLookup(pos, e1, e2);
@@ -308,6 +280,21 @@ public class MJGrammar
 	//: <exp1> ::= # `this =>
 	public Exp newThis(int pos) {
 		return new This(pos);
+	}
+
+	//: <exp1> ::= # `true =>
+	public Exp newTrue(int pos) {
+		return new True(pos);
+	}
+
+	//: <exp1> ::= # `false =>
+	public Exp newFalse(int pos) {
+		return new False(pos);
+	}
+
+	//: <exp1> ::= # `null =>
+	public Exp newNullExp(int pos) {
+		return new Null(pos);
 	}
 
 	//================================================================

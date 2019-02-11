@@ -185,6 +185,32 @@ public class MJGrammar
 		return new Assign(pos, lhs, rhs);
 	}
 
+	//: <assign> ::= # `++ ID =>
+	public Statement assignPlusPlusLeft(int pos, String var) {
+		Exp lhs = new IdentifierExp(pos, var);
+		Exp rhs = new Plus(pos, lhs, new IntegerLiteral(pos, 1));
+
+		return new Assign(pos, lhs, rhs);
+	}
+
+	//: <assign> ::= # ID `-- =>
+	public Statement assignMinusMinus(int pos, String var) {
+		Exp lhs = new IdentifierExp(pos, var);
+		Exp rhs = new Minus(pos, lhs, new IntegerLiteral(pos, 1));
+
+		return new Assign(pos, lhs, rhs);
+
+	}
+
+	//: <assign> ::= # `-- ID =>
+	public Statement assignMinusMinusLeft(int pos, String var) {
+		Exp lhs = new IdentifierExp(pos, var);
+		Exp rhs = new Minus(pos, lhs, new IntegerLiteral(pos, 1));
+
+		return new Assign(pos, lhs, rhs);
+
+	}
+
 	//: <local var decl> ::= <type> # ID `= <exp> =>
 	public Statement localVarDecl(Type t, int pos, String name, Exp init) {
 		return new LocalDeclStatement(pos, new LocalVarDecl(pos, t, name, init));
@@ -224,7 +250,17 @@ public class MJGrammar
 	// ADD/MINUS OPERATIONS
 	// exp4 ::= exp + exp, exp - exp
 
+	// COMPARISON OPERATIONS
+	// exp 5 ::= exp < exp, exp > exp, exp <= exp, exp >= exp, exp ::= instanceof ID
 
+	// EQUAL OPERATIONS
+	// exp6 ::= exp != exp, exp == exp
+
+	// AND OPERATION
+	// exp7 ::= exp && exp
+
+	// OR OPERATION
+	// exp8 ::= exp || exp
 	============================================================================== */
 
 	//: <exp> ::= <exp8> => pass
@@ -375,19 +411,20 @@ public class MJGrammar
 	//: <exp1> ::= `new <type> !<empty bracket pair> # `[ <exp> `] <empty bracket pair>** =>
 	public Exp newArray(Type t, int pos, Exp e, List<Object> arrSize) {
 		ArrayType newArr = new ArrayType(pos, t);
-		// for(int i = 0; i < arrSize.size(); i++) {
-		// 	newArr = new ArrayType(pos, newArr);
-		// }
+		for(int i = 0; i < arrSize.size(); i++) {
+			newArr = new ArrayType(pos, newArr);
+		}
 		return new NewArray(pos, newArr, e);
 	}
 
-	//: <exp list> ::= <exp> <next exp>* =>
+	//: <expList> ::= <exp> <next exp>* =>
 	public ExpList newExpList(Exp first, List<Exp> rest) {
 		rest.add(first);
 		return new ExpList(rest);
 	}
 
 	//: <next exp> ::= `, <exp> => pass
+
 
 
 	//================================================================

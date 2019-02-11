@@ -1,0 +1,12 @@
+for (iterator; i < condition; i++) {
+    stmts*
+}
+
+return :
+{
+    i = 0;
+    while(i < 10) {
+        stmt*
+        i = i + 1;
+    }
+}

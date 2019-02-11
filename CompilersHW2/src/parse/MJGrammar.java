@@ -113,6 +113,7 @@ public class MJGrammar
 	public Type identifierType(int pos, String name) {
 		return new IdentifierType(pos, name);
 	}
+
 	//: <type> ::= # <type> <empty bracket pair> =>
 	public Type newArrayType(int pos, Type t, Object dummy) {
 		return new ArrayType(pos, t);
@@ -142,6 +143,12 @@ public class MJGrammar
 		return new If(ifPos, exp, ifBody, elseBody);
 	}
 
+	//: <stmt> ::= # `for `( <assign> `; <exp> `; <assign> `) <stmt> =>
+	public Statement newForLoop(int pos, Statement iterator, Exp exp, Statement operation, Statement body) {
+		warning(pos, iterator.toString());
+		return new While(pos, exp, body);
+	}
+
 	//: <stmt> ::= # `while `( <exp> `) <stmt> =>
 	public Statement newWhileBlock(int pos, Exp exp, Statement body) {
 		return new While(pos, exp, body);
@@ -158,6 +165,14 @@ public class MJGrammar
 		return new Assign(pos, lhs, rhs);
 	}
 
+	//: <assign> ::= # ID `++ =>
+	public Statement assignPlusPlus(int pos, String var) {
+		Exp lhs = new IdentifierExp(pos, var);
+		Exp rhs = new Plus(pos, lhs, new IntegerLiteral(pos, 1));
+
+		return new Assign(pos, lhs, rhs);
+	}
+
 	//: <local var decl> ::= <type> # ID `= <exp> =>
 	public Statement localVarDecl(Type t, int pos, String name, Exp init) {
 		return new LocalDeclStatement(pos, new LocalVarDecl(pos, t, name, init));
@@ -166,6 +181,21 @@ public class MJGrammar
 	//: <inst var decl> ::= <type> # ID `; =>
 	public Decl instanceVarDecl(Type t, int pos, String name) {
 		return new InstVarDecl(pos, t, name);
+	}
+
+	//: <stmt> ::= # `; =>
+	public Statement newEmptyStmt(int pos) {
+		return new Block(pos, new StatementList());
+	}
+
+	//: <stmt> ::= # `switch `( <exp> `) `{ <case>* `} =>
+	public Statement newSwitch(int pos, Exp condition, List<Statement> cases) {
+		return new Switch(pos, condition, new StatementList(cases));
+	}
+
+	//: <case> ::= `case # <exp> `; =>
+	public Statement newCase(int pos, Exp e) {
+		return new Case(pos, e);
 	}
 
 	/** ==========================================================================
@@ -296,6 +326,21 @@ public class MJGrammar
 	public Exp newNullExp(int pos) {
 		return new Null(pos);
 	}
+
+	//: <exp1> ::= # `new # ID `( `) =>
+	public Exp newObject(int pos, int typePos, String name) {
+		return new NewObject(pos, new IdentifierType(typePos, name));
+	}
+
+	// //: <exp1> ::= `new <type> # `[ <exp `] <empty bracket pair>* =>
+	// public Exp newArray(Type t, int pos, Exp e, List<Object> arrSize) {
+	// 	ArrayType newArr = new ArrayType(pos, t);
+	// 	for(int i = 0; i < arrSize.size(); i++) {
+	// 		newArr = new ArrayType(pos, newArr);
+	// 	}
+	// 	return new NewArray(pos, newArr, e);
+	// }
+
 
 	//================================================================
 	// Lexical grammar for filtered language begins here: DO NOT

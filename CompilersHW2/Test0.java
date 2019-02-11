@@ -9,5 +9,14 @@ class Main extends Food {
     break;
     boolean n = stork + 4;
     int k = 4;
+
+    while(i > 0) {
+      int newt = "Test";
+    }
+
+    for (i = 0; i < 100;) {
+      int jace = 6;
+      jace++;
+    }
   }
 }

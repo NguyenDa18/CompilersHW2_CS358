@@ -227,11 +227,34 @@ public class MJGrammar
 
 	============================================================================== */
 
-	//: <exp> ::= <exp5> => pass
+	//: <exp> ::= <exp8> => pass
+	//: <exp8> ::= <exp7> => pass
+	//: <exp7> ::= <exp6> => pass
+	//: <exp6> ::= <exp5> => pass
 	//: <exp5> ::= <exp4> => pass
 	//: <exp4> ::= <exp3> => pass
 	//: <exp3> ::= <exp2> => pass
 	//: <exp2> ::= <exp1> => pass
+
+	//: <exp8> ::= <exp8> # `|| <exp7> =>
+	public Exp newOr(Exp e1, int pos, Exp e2) {
+		return new Or(pos, e1, e2);
+	}
+
+	//: <exp7> ::= <exp7> # `&& <exp6> =>
+	public Exp newAnd(Exp e1, int pos, Exp e2) {
+		return new And(pos, e1, e2);
+	}
+
+	//: <exp6> ::= <exp6> # `== <exp5> =>
+	public Exp newDoubleEqualTo(Exp e1, int pos, Exp e2) {
+		return new Equals(pos, e1, e2);
+	}
+
+	//: <exp6> ::= <exp6> # `!= <exp5> =>
+	public Exp newNotEqualTo(Exp e1, int pos, Exp e2) {
+		return newUnaryNot(pos, new Equals(pos, e1, e2));
+	}
 
 	//: <exp5> ::= <exp5> # `< <exp4> =>
 	public Exp newLessThan(Exp left, int pos, Exp right) {
@@ -352,9 +375,9 @@ public class MJGrammar
 	//: <exp1> ::= `new <type> !<empty bracket pair> # `[ <exp> `] <empty bracket pair>** =>
 	public Exp newArray(Type t, int pos, Exp e, List<Object> arrSize) {
 		ArrayType newArr = new ArrayType(pos, t);
-		for(int i = 0; i < arrSize.size(); i++) {
-			newArr = new ArrayType(pos, newArr);
-		}
+		// for(int i = 0; i < arrSize.size(); i++) {
+		// 	newArr = new ArrayType(pos, newArr);
+		// }
 		return new NewArray(pos, newArr, e);
 	}
 

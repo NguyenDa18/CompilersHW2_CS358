@@ -14,7 +14,7 @@ class Main extends Food {
       int newt = "Test";
     }
 
-    for (i = 0; i < 100;) {
+    for (i = 0; i < 100; i++;) {
       int jace = 6;
       jace++;
     }

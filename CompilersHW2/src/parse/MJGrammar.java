@@ -1,4 +1,5 @@
 package parse;
+import java.util.ArrayList;
 import java.util.List;
 import errorMsg.*;
 import syntaxtree.*;
@@ -145,8 +146,19 @@ public class MJGrammar
 
 	//: <stmt> ::= # `for `( <assign> `; <exp> `; <assign> `) <stmt> =>
 	public Statement newForLoop(int pos, Statement iterator, Exp exp, Statement operation, Statement body) {
-		warning(pos, iterator.toString());
-		return new While(pos, exp, body);
+		List<Statement> whileContent = new ArrayList<Statement>();
+		whileContent.add(0, body);
+		whileContent.add(1, operation);
+
+		// Block whileBlockContent = newBlock(pos, whileContent);
+
+		Statement whileBlock = newWhileBlock(pos, exp, newBlock(pos, whileContent));
+
+		List<Statement> statements = new ArrayList<Statement>();
+		statements.add(iterator);
+		statements.add(whileBlock);
+
+		return newBlock(pos, statements);
 	}
 
 	//: <stmt> ::= # `while `( <exp> `) <stmt> =>
@@ -307,6 +319,11 @@ public class MJGrammar
 		return new IntegerLiteral(pos, charAscii);
 	}
 
+	//: <exp1> ::= <exp1> `. # ID =>
+	public Exp newInstVarAccess(Exp e, int pos, String name) {
+		return new InstVarAccess(pos, e, name);
+	}
+
 	//: <exp1> ::= # `this =>
 	public Exp newThis(int pos) {
 		return new This(pos);
@@ -332,14 +349,22 @@ public class MJGrammar
 		return new NewObject(pos, new IdentifierType(typePos, name));
 	}
 
-	// //: <exp1> ::= `new <type> # `[ <exp `] <empty bracket pair>* =>
-	// public Exp newArray(Type t, int pos, Exp e, List<Object> arrSize) {
-	// 	ArrayType newArr = new ArrayType(pos, t);
-	// 	for(int i = 0; i < arrSize.size(); i++) {
-	// 		newArr = new ArrayType(pos, newArr);
-	// 	}
-	// 	return new NewArray(pos, newArr, e);
-	// }
+	//: <exp1> ::= `new <type> !<empty bracket pair> # `[ <exp> `] <empty bracket pair>** =>
+	public Exp newArray(Type t, int pos, Exp e, List<Object> arrSize) {
+		ArrayType newArr = new ArrayType(pos, t);
+		for(int i = 0; i < arrSize.size(); i++) {
+			newArr = new ArrayType(pos, newArr);
+		}
+		return new NewArray(pos, newArr, e);
+	}
+
+	//: <exp list> ::= <exp> <next exp>* =>
+	public ExpList newExpList(Exp first, List<Exp> rest) {
+		rest.add(first);
+		return new ExpList(rest);
+	}
+
+	//: <next exp> ::= `, <exp> => pass
 
 
 	//================================================================

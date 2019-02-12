@@ -3,7 +3,7 @@
 // and mismatched types--but these will not be caught until Assignment 3
 // and Assignment 4.
 class Main extends Food {
-  public void main() {
+  public boolean main() {
     int b = jon[1];
 
     break;
@@ -19,6 +19,8 @@ class Main extends Food {
       int jace = 6;
       jace++;
     }
+
+    return b+5;
 
 
   }

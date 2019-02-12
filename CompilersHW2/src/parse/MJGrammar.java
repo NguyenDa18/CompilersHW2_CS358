@@ -81,23 +81,17 @@ public class MJGrammar
 	//: <decl in class> ::= <method decl> => pass
 	//: <decl in class> ::= <inst var decl> => pass
 
-	// //: <method decl> ::= `public `void # ID <formalList> `{ <stmt>* `} =>
-	// public Decl createMethodDeclVoid(int pos, String name, VarDeclList formalList, List<Statement> stmts) {
-	// 	return new MethodDeclVoid(pos, name, formalList,
-	// 			new StatementList(stmts));
-	// }
-
-	//: <method decl> ::= `public `void # ID `( `) `{ <stmt>* `} =>
-	public Decl createMethodDeclVoid(int pos, String name, List<Statement> stmts) {
-		return new MethodDeclVoid(pos, name, new VarDeclList(new VarDeclList()),
+	//: <method decl> ::= `public `void # ID <formalList> `{ <stmt>* `} =>
+	public Decl createMethodDeclVoid(int pos, String name, VarDeclList formalList, List<Statement> stmts) {
+		return new MethodDeclVoid(pos, name, formalList,
 				new StatementList(stmts));
 	}
 
-	// //: <method decl> ::= `public <type> # ID <formalList> `{ <stmt>* <returnStmt> `} =>
-	// public Decl createMethodDeclNonVoid(Type t, int pos, String name, VarDeclList formalList, List<Statement> stmts, Exp returnStmt) {
-	// 	return new MethodDeclNonVoid(pos, t, name, formalList,
-	// 			new StatementList(stmts), returnStmt);
-	// }
+	//: <method decl> ::= `public !`void <type> # ID <formalList> `{ <stmt>* <returnStmt> `} =>
+	public Decl createMethodDeclNonVoid(Type t, int pos, String name, VarDeclList formalList, List<Statement> stmts, Exp returnStmt) {
+		return new MethodDeclNonVoid(pos, t, name, formalList,
+				new StatementList(stmts), returnStmt);
+	}
 
 	//: <returnStmt> ::= `return <exp> `; => pass
 

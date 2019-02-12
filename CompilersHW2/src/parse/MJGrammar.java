@@ -79,11 +79,42 @@ public class MJGrammar
 	}
 
 	//: <decl in class> ::= <method decl> => pass
+	//: <decl in class> ::= <inst var decl> => pass
+
+	// //: <method decl> ::= `public `void # ID <formalList> `{ <stmt>* `} =>
+	// public Decl createMethodDeclVoid(int pos, String name, VarDeclList formalList, List<Statement> stmts) {
+	// 	return new MethodDeclVoid(pos, name, formalList,
+	// 			new StatementList(stmts));
+	// }
 
 	//: <method decl> ::= `public `void # ID `( `) `{ <stmt>* `} =>
 	public Decl createMethodDeclVoid(int pos, String name, List<Statement> stmts) {
 		return new MethodDeclVoid(pos, name, new VarDeclList(new VarDeclList()),
 				new StatementList(stmts));
+	}
+
+	// //: <method decl> ::= `public <type> # ID <formalList> `{ <stmt>* <returnStmt> `} =>
+	// public Decl createMethodDeclNonVoid(Type t, int pos, String name, VarDeclList formalList, List<Statement> stmts, Exp returnStmt) {
+	// 	return new MethodDeclNonVoid(pos, t, name, formalList,
+	// 			new StatementList(stmts), returnStmt);
+	// }
+
+	//: <returnStmt> ::= `return <exp> `; => pass
+
+	//: <formalList> ::= `( <type> # ID <listElement>* `) =>
+	public VarDeclList createVarDeclList(Type first, int pos, String name, List<VarDecl> elements) {
+		elements.add(new InstVarDecl(pos, first, name));
+		return new VarDeclList(elements);
+	}
+
+	//: <formalList> ::= `( `) =>
+	public VarDeclList createEmptyVarDeclList() {
+		return new VarDeclList(new VarDeclList());
+	}
+
+	//: <listElement> ::= `, <type> # ID =>
+	public VarDecl createListVarDecl(Type t, int pos, String name) {
+		return new InstVarDecl(pos, t, name);
 	}
 
 	/** ==========================================================================
@@ -135,7 +166,7 @@ public class MJGrammar
 	//: <stmt> ::= <local var decl> `; => pass
 
 	//: <stmt> ::= # `if `( <exp> `) <stmt> # !`else =>
-	public Statement newIfBlock(int pos, Exp exp, Statement body, int elsePos) {
+	public Statement newIfOnlyBlock(int pos, Exp exp, Statement body, int elsePos) {
 		return new If(pos, exp, body, new Block(elsePos, new StatementList()));
 	}
 
@@ -150,9 +181,22 @@ public class MJGrammar
 		whileContent.add(0, body);
 		whileContent.add(1, operation);
 
-		// Block whileBlockContent = newBlock(pos, whileContent);
-
 		Statement whileBlock = newWhileBlock(pos, exp, newBlock(pos, whileContent));
+
+		List<Statement> statements = new ArrayList<Statement>();
+		statements.add(iterator);
+		statements.add(whileBlock);
+
+		return newBlock(pos, statements);
+	}
+
+	//: <stmt> ::= # `for `( <assign> `; `; <assign> `) <stmt> =>
+	public Statement newTrueForLoop(int pos, Statement iterator, Statement operation, Statement body) {
+		List<Statement> whileContent = new ArrayList<Statement>();
+		whileContent.add(0, body);
+		whileContent.add(1, operation);
+
+		Statement whileBlock = newWhileBlock(pos, newTrue(pos), newBlock(pos, whileContent));
 
 		List<Statement> statements = new ArrayList<Statement>();
 		statements.add(iterator);
@@ -353,6 +397,13 @@ public class MJGrammar
 		return new Not(pos, e);
 	}
 
+	// //: <exp2> ::= # <exp1> &<arrLength> =>
+	// public Exp newArrayLength(int pos, Exp e) {
+	// 	return new ArrayLength(pos, e);
+	// }
+
+	//// : <arrLength> ::= "./length" !ID => null
+
 	//: <exp1> ::= # ID  =>
 	public Exp newIdentfierExp(int pos, String name) {
 		return new IdentifierExp(pos, name);
@@ -421,6 +472,11 @@ public class MJGrammar
 	public ExpList newExpList(Exp first, List<Exp> rest) {
 		rest.add(first);
 		return new ExpList(rest);
+	}
+
+	//: <expList> ::= =>
+	public ExpList newEmptyExpList() {
+		return new ExpList();
 	}
 
 	//: <next exp> ::= `, <exp> => pass

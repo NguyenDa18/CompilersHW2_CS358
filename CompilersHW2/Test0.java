@@ -11,7 +11,7 @@ class Main extends Food {
     int[] clocks = new int[5];
     int k = 4;
 
-    while(i > 0) {
+    while (i > 0) {
       int newt = "Test";
     }
 
@@ -19,5 +19,7 @@ class Main extends Food {
       int jace = 6;
       jace++;
     }
+
+
   }
 }

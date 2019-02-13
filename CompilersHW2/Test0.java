@@ -20,6 +20,20 @@ class Main extends Food {
       jace++;
     }
 
+
+
+    switch(x) {
+      case a:
+        int a = 5;
+//        case 7:
+//
+//      default:
+//        h(z);
+        jace(6);
+
+
+    }
+
     return b+5;
 
 

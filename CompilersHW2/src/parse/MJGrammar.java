@@ -159,6 +159,11 @@ public class MJGrammar
 
 	//: <stmt> ::= <local var decl> `; => pass
 
+	//: <stmt> ::= # <methodCall> `; =>
+	public Statement newExpStatement(int pos, Call methodCall) {
+		return new CallStatement(pos, methodCall);
+	}
+
 	//: <stmt> ::= # `if `( <exp> `) <stmt> # !`else =>
 	public Statement newIfOnlyBlock(int pos, Exp exp, Statement body, int elsePos) {
 		return new If(pos, exp, body, new Block(elsePos, new StatementList()));
@@ -269,9 +274,16 @@ public class MJGrammar
 		return new Switch(pos, condition, new StatementList(cases));
 	}
 
-	//: <case> ::= `case # <exp> `; =>
+	//: <case> ::= `case # <exp> `: =>
 	public Statement newCase(int pos, Exp e) {
 		return new Case(pos, e);
+	}
+
+	//: <case> ::= <stmt> => pass
+
+	//: <case> ::= # `default `: =>
+	public Statement newDefault(int pos) {
+		return new Case(pos, new Super(pos));
 	}
 
 	/** ==========================================================================
@@ -462,18 +474,36 @@ public class MJGrammar
 		return new NewArray(pos, newArr, e);
 	}
 
+	// HELPER EXPRESSIONS
+
 	//: <expList> ::= <exp> <next exp>* =>
 	public ExpList newExpList(Exp first, List<Exp> rest) {
 		rest.add(first);
 		return new ExpList(rest);
 	}
 
+	//: <next exp> ::= `, <exp> => pass
+
 	//: <expList> ::= =>
 	public ExpList newEmptyExpList() {
 		return new ExpList();
 	}
 
-	//: <next exp> ::= `, <exp> => pass
+	//: <methodCall> ::= # <exp1> `. ID `( <expList> `) =>
+	public Call newMethodCall(int pos, Exp calledVar, String methodName, ExpList params) {
+		return new Call(pos, calledVar, methodName, params);
+	}
+
+	//: <methodCall> ::= # `super `. # ID `( <expList> `) =>
+	public Call newSuperMethodCall(int pos, int varNamePos, String methodName, ExpList params) {
+		return new Call(varNamePos, new Super(pos), methodName, params);
+	}
+
+	//: <methodCall> ::= # ID `( <expList> `) =>
+	public Call newThisMethodCall(int pos, String methodName, ExpList params) {
+		return new Call(pos, new This(pos), methodName, params);
+	}
+
 
 
 

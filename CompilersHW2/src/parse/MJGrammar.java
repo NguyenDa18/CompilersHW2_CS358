@@ -160,11 +160,16 @@ public class MJGrammar
 	//: <stmt> ::= <local var decl> `; => pass
 
 	//: <stmt> ::= # <methodCall> `; =>
-	public Statement newExpStatement(int pos, Call methodCall) {
+	public Statement newCallStatement(int pos, Call methodCall) {
 		return new CallStatement(pos, methodCall);
 	}
 
-	//: <stmt> ::= # `if `( <exp> `) <stmt> # !`else =>
+	// //: <stmt> ::= # `; =>
+	// public Statement newBlankStmt(int pos) {
+	// 	return new Block(pos, new StatementList());
+	// }
+
+	//: <stmt> ::= # `if `( <exp> `) <stmt> !`else # =>
 	public Statement newIfOnlyBlock(int pos, Exp exp, Statement body, int elsePos) {
 		return new If(pos, exp, body, new Block(elsePos, new StatementList()));
 	}
@@ -174,7 +179,7 @@ public class MJGrammar
 		return new If(ifPos, exp, ifBody, elseBody);
 	}
 
-	//: <stmt> ::= # `for `( <assign> `; <exp> `; <assign> `) <stmt> =>
+	//: <stmt> ::= # `for `( <for1> `; <for2> `; <for3> `) <stmt> =>
 	public Statement newForLoop(int pos, Statement iterator, Exp exp, Statement operation, Statement body) {
 		List<Statement> whileContent = new ArrayList<Statement>();
 		whileContent.add(0, body);
@@ -189,20 +194,36 @@ public class MJGrammar
 		return newBlock(pos, statements);
 	}
 
-	//: <stmt> ::= # `for `( <assign> `; `; <assign> `) <stmt> =>
-	public Statement newTrueForLoop(int pos, Statement iterator, Statement operation, Statement body) {
-		List<Statement> whileContent = new ArrayList<Statement>();
-		whileContent.add(0, body);
-		whileContent.add(1, operation);
 
-		Statement whileBlock = newWhileBlock(pos, newTrue(pos), newBlock(pos, whileContent));
-
-		List<Statement> statements = new ArrayList<Statement>();
-		statements.add(iterator);
-		statements.add(whileBlock);
-
-		return newBlock(pos, statements);
+	//: <for1> ::= <local var decl> => pass
+	//: <for1> ::= <assign> => pass
+	//: <for1> ::= # <methodCall> =>
+	public Statement newFor1CallStatement(int pos, Call methodCall) {
+		return new CallStatement(pos, methodCall);
 	}
+	//: <for1> ::= # =>
+	public Statement newFor1EmptyStmt(int pos) {
+		return new Block(pos, new StatementList());
+	}
+
+	//: <for2> ::= <exp> => pass
+	//: <for2> ::= # =>
+	public Exp newFor2True(int pos) {
+		return new True(pos);
+	}
+
+	//: <for3> ::= # <methodCall> =>
+	public Statement newFor3CallStatement(int pos, Call methodCall) {
+		return new CallStatement(pos, methodCall);
+	}
+
+	//: <for3> ::= <assign> => pass
+
+	//: <for3> ::= # =>
+	public Statement newFor3EmptyStmt(int pos) {
+		return new Block(pos, new StatementList());
+	}
+
 
 	//: <stmt> ::= # `while `( <exp> `) <stmt> =>
 	public Statement newWhileBlock(int pos, Exp exp, Statement body) {

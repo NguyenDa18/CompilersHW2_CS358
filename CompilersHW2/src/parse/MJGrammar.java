@@ -87,7 +87,9 @@ public class MJGrammar
 				new StatementList(stmts));
 	}
 
-	//: <method decl> ::= `public !`void <type> # ID <formalList> `{ <stmt>* <returnStmt> `} =>
+	
+
+	//: <method decl> ::= `public <type> # ID <formalList> `{ <stmt>* <returnStmt> `} =>
 	public Decl createMethodDeclNonVoid(Type t, int pos, String name, VarDeclList formalList, List<Statement> stmts, Exp returnStmt) {
 		return new MethodDeclNonVoid(pos, t, name, formalList,
 				new StatementList(stmts), returnStmt);
@@ -125,11 +127,6 @@ public class MJGrammar
 		return new BooleanType(pos);
 	}
 
-	//: <type> ::= # `void =>
-	public Type voidType(int pos) {
-		return new VoidType(pos);
-	}
-
 	//: <type> ::= # `null =>
 	public Type nullType(int pos) {
 		return new NullType(pos);
@@ -164,11 +161,6 @@ public class MJGrammar
 		return new CallStatement(pos, methodCall);
 	}
 
-	// //: <stmt> ::= # `; =>
-	// public Statement newBlankStmt(int pos) {
-	// 	return new Block(pos, new StatementList());
-	// }
-
 	//: <stmt> ::= # `if `( <exp> `) <stmt> !`else # =>
 	public Statement newIfOnlyBlock(int pos, Exp exp, Statement body, int elsePos) {
 		return new If(pos, exp, body, new Block(elsePos, new StatementList()));
@@ -178,6 +170,11 @@ public class MJGrammar
 	public Statement newIfElseBlock(int ifPos, Exp exp, Statement ifBody, int elsePos, Statement elseBody) {
 		return new If(ifPos, exp, ifBody, elseBody);
 	}
+
+	//=============================================================================
+	// FOR LOOP INFO: CAN BE ANY ONE OF THESE
+	// for ( (type ID = exp | assign | callExp)? ; exp? ; (assign | callExp)? ) statement
+	//=============================================================================
 
 	//: <stmt> ::= # `for `( <for1> `; <for2> `; <for3> `) <stmt> =>
 	public Statement newForLoop(int pos, Statement iterator, Exp exp, Statement operation, Statement body) {
@@ -216,9 +213,7 @@ public class MJGrammar
 	public Statement newFor3CallStatement(int pos, Call methodCall) {
 		return new CallStatement(pos, methodCall);
 	}
-
 	//: <for3> ::= <assign> => pass
-
 	//: <for3> ::= # =>
 	public Statement newFor3EmptyStmt(int pos) {
 		return new Block(pos, new StatementList());
@@ -238,6 +233,11 @@ public class MJGrammar
 
 	//: <assign> ::= <exp> # `= <exp> =>
 	public Statement assign(Exp lhs, int pos, Exp rhs) {
+		return new Assign(pos, lhs, rhs);
+	}
+
+	//: <assign> ::= <exp> # `= <methodCall> =>
+	public Statement assignMethodCall(Exp lhs, int pos, Call rhs) {
 		return new Assign(pos, lhs, rhs);
 	}
 
@@ -376,7 +376,16 @@ public class MJGrammar
 	//: <exp5> ::= <exp5> # `> <exp4> =>
 	public Exp newGreaterThan(Exp left, int pos, Exp right) {
 		return new GreaterThan(pos, left, right);
+	}
 
+	//: <exp5> ::= <exp5> # `>= <exp4> =>
+	public Exp newGreaterThanEqualTo(Exp left, int pos, Exp right) {
+		return new Not(pos, new GreaterThan(pos, left, right));
+	}
+
+	//: <exp5> ::= <exp5> # `instanceof # ID =>
+	public Exp newInstanceOf(Exp e, int instancePos, int typePos, String name) {
+		return new InstanceOf(instancePos, e, new IdentifierType(typePos, name));
 	}
 
 	//: <exp4> ::= <exp4> # `+ <exp3> =>
@@ -423,13 +432,6 @@ public class MJGrammar
 	public Exp newUnaryNot(int pos, Exp e) {
 		return new Not(pos, e);
 	}
-
-	// //: <exp2> ::= # <exp1> &<arrLength> =>
-	// public Exp newArrayLength(int pos, Exp e) {
-	// 	return new ArrayLength(pos, e);
-	// }
-
-	//// : <arrLength> ::= "./length" !ID => null
 
 	//: <exp1> ::= # ID  =>
 	public Exp newIdentfierExp(int pos, String name) {

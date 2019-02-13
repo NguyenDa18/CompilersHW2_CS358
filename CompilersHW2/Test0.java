@@ -3,7 +3,7 @@
 // and mismatched types--but these will not be caught until Assignment 3
 // and Assignment 4.
 class Main extends Food {
-  public boolean main() {
+  public boolean main(int bob, boolean Jake, int hogs) {
     int b = jon[1];
 
     break;
@@ -15,10 +15,12 @@ class Main extends Food {
       int newt = "Test";
     }
 
-    for (i = 0; i < 100; i++) {
+    for (js(); i < arr.length ; i++) {
       int jace = 6;
       jace++;
     }
+
+    hi.donds();
 
 
 
@@ -29,7 +31,8 @@ class Main extends Food {
 //
 //      default:
 //        h(z);
-        jace(6);
+        jim = super.doThis();
+
 
 
     }
